@@ -18,23 +18,39 @@ import com.dhbkhn.manageusers.model.ShopBoat;
 public interface ShopBoatRepository
                 extends JpaRepository<ShopBoat, Integer> {
         // save shop boat
-        // public ShopBoat save(ShopBoat shopBoat);
+        @Modifying
+        @Query(value = "INSERT INTO shopboat (name, address, owner, description, avatar, phone_number, status, code, type) "
+                        + "VALUES (:name, :address, :owner, :description, :avatar, :phoneNumber, :status, :code, :type)", nativeQuery = true)
+        void createNewSB(
+                        @Param("name") String name,
+                        @Param("address") String address,
+                        @Param("owner") int owner,
+                        @Param("description") String description,
+                        @Param("avatar") String avatar,
+                        @Param("phoneNumber") String phoneNumber,
+                        @Param("status") int status,
+                        @Param("code") String code,
+                        @Param("type") String type);
+
+        // find by code
+        @Query(value = "SELECT * FROM shopboat WHERE code = :code", nativeQuery = true)
+        public ShopBoat findByCode(@Param("code") String code);
 
         // get all shop boat
         // use query to get all shop boat
 
         // get all shop boat
         // @Query(value = "SELECT * FROM ShopBoat", nativeQuery = true)
-        @Query(value = "SELECT ShopBoat.*, User.name AS owner_name FROM ShopBoat INNER JOIN User ON ShopBoat.owner=User.id", nativeQuery = true)
+        @Query(value = "SELECT shopboat.*, User.name AS owner_name FROM ShopBoat INNER JOIN User ON ShopBoat.owner=User.id", nativeQuery = true)
         public List<Object[]> getListShopBoats();
 
         // get all shop boat with pagination
-        @Query(value = "SELECT ShopBoat.*, User.name AS owner_name FROM ShopBoat INNER JOIN User ON ShopBoat.owner=User.id", nativeQuery = true)
+        @Query(value = "SELECT shopboat.*, User.name AS owner_name FROM ShopBoat INNER JOIN User ON ShopBoat.owner=User.id", nativeQuery = true)
         Page<Object[]> findAllCC(Pageable pageable);
 
         // find shop boat by id
         // @Modifying
-        @Query("SELECT sb FROM ShopBoat sb WHERE sb.id = :id")
+        @Query(value = "SELECT * FROM shopboat WHERE id = :id", nativeQuery = true)
         public ShopBoat findById(int id);
 
         // update status by id
